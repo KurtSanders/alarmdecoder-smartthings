@@ -74,6 +74,7 @@ metadata {
 
     // capabilities
     capability "Refresh"
+    capability "Sensor"
 
     // attributes
     attribute(
@@ -199,6 +200,10 @@ metadata {
           icon: "st.security.alarm.off",
           backgroundColor: "#e86d13")
       }
+        tileAttribute("device.panel_ready", key: "SECONDARY_CONTROL") {
+            attributeState("panel_ready", label:'${currentValue}')
+        }
+
     }
 
     // arm/disarm button #1
@@ -1290,6 +1295,23 @@ def update_state(data) {
       alarm_status = "away"
       if (data.panel_armed_stay == true)
         alarm_status = "stay"
+        // Begin - Add Status message to main tile - KurtSanders
+          if (state.panel_state=="disarmed") {
+              def timeNow = new Date().format('EEE MMM d, h:mm:ss a',location.timeZone)
+              log.info "Arm State Date updated to ${timeNow}"
+              data.panel_ready = sprintf("Armed at %s", timeNow)
+              events << createEvent(name: "panel_ready", value: data.panel_ready)
+          }
+      } else {
+          def panel_message = data.last_message_received.split(',')[3]
+          if (panel_message.contains('FAULT')) {
+              data.panel_ready = panel_message.replace("\"", "").trim().toLowerCase().split()*.capitalize().join(" ")
+              log.info "data.panel_ready-> ${data.panel_ready}"
+          } else {
+              data.panel_ready = data.panel_ready?"Ready to Arm":"Not Ready to Arm"
+          }
+          events << createEvent(name: "panel_ready", value: data.panel_ready)
+        // End - Add Status message to main tile - KurtSanders
     }
 
     // Create an event to notify Smart Home Monitor in our service.
@@ -1300,6 +1322,9 @@ def update_state(data) {
         value: alarm_status,
         displayed: true,
         isStateChange: true)
+
+
+
 
     // Update our alarming switch so MONITORs know we are in an alarm state.
     //  In alarm close contact.
