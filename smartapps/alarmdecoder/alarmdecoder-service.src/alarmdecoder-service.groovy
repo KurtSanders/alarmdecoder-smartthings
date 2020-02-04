@@ -86,7 +86,7 @@ import groovy.transform.Field
  * then you can say 'Computer - Security Arm Stay On'
  */
 @Field lname = "AlarmDecoder"
-@Field sname = "Security"
+@Field sname = "AD"
 @Field guiname = "${lname} UI"
 @Field idname = ""
 
