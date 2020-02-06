@@ -1296,7 +1296,7 @@ def update_state(data) {
       if (data.panel_armed_stay == true)
         alarm_status = "stay"
         // Begin - Add Status message to main tile - KurtSanders
-          if (state.panel_state=="disarmed") {
+          if (state.panel_state=="ready") {
               def timeNow = new Date().format('EEE MMM d, h:mm:ss a',location.timeZone)
               log.info "Arm State Date updated to ${timeNow}"
               data.panel_ready = sprintf("Armed at %s", timeNow)
