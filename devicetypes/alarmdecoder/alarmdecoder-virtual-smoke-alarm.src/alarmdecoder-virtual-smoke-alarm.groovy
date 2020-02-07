@@ -28,6 +28,7 @@ metadata {
     namespace: APPNAMESPACE,
     author: "Nu Tech Software Solutions, Inc.") {
     capability "Smoke Detector"
+    capability "Sensor"
   }
 
   // tile definitions
